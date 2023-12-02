@@ -1,0 +1,34 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1701504109922,
+      "tag": "0000_large_proemial_gods",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1701504446031,
+      "tag": "0001_strong_roughhouse",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1701511903835,
+      "tag": "0002_high_cannonball",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1701513863475,
+      "tag": "0003_easy_karen_page",
+      "breakpoints": true
+    }
+  ]
+}
