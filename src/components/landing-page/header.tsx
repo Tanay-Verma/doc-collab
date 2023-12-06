@@ -156,7 +156,7 @@ const Header = () => {
                 <ListItem title="Pro Plan" href={"#"}>
                   Unlock full power with collaboration.
                 </ListItem>
-                <ListItem title={"free Plan"} href={"#"}>
+                <ListItem title={"Free Plan"} href={"#"}>
                   Great for teams just starting out.
                 </ListItem>
               </ul>
