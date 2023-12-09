@@ -18,7 +18,7 @@ import Image from "next/image";
 import Logo from "@/public/cypresslogo.svg";
 import { Input } from "@/src/components/ui/input";
 import { Button } from "@/src/components/ui/button";
-import Loader from "@/src/components/Loader";
+import Loader from "@/src/components/global/Loader";
 import { actionLoginUser } from "@/src/lib/server-actions/auth-actions";
 
 const LoginPage = () => {
@@ -35,12 +35,12 @@ const LoginPage = () => {
   const onSubmit: SubmitHandler<z.infer<typeof FormSchema>> = async (
     formData
   ) => {
-     const {error} = await actionLoginUser(formData);
-     if(error){
-        form.reset()
-        setSubmitError(error.message);
-     }
-     router.replace("/dashboard")
+    const { error } = await actionLoginUser(formData);
+    if (error) {
+      form.reset();
+      setSubmitError(error.message);
+    }
+    router.replace("/dashboard");
   };
   return (
     <Form {...form}>
@@ -77,41 +77,44 @@ const LoginPage = () => {
           disabled={isLoading}
           control={form.control}
           name="email"
-          render={({field}) => (
+          render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input type="email" placeholder="Email" {...field}/>
+                <Input type="email" placeholder="Email" {...field} />
               </FormControl>
-              <FormMessage/>
+              <FormMessage />
             </FormItem>
           )}
         />
-         <FormField
+        <FormField
           disabled={isLoading}
           control={form.control}
           name="password"
-          render={({field}) => (
+          render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input type="password" placeholder="Password" {...field}/>
+                <Input type="password" placeholder="Password" {...field} />
               </FormControl>
-              <FormMessage/>
+              <FormMessage />
             </FormItem>
           )}
         />
         {submitError && <FormMessage>{submitError}</FormMessage>}
         <Button
-        type="submit"
-        className="w-full p-6"
-        size="lg"
-        disabled={isLoading}>
-            {!isLoading ? "Login":<Loader/>}
+          type="submit"
+          className="w-full p-6"
+          size="lg"
+          disabled={isLoading}
+        >
+          {!isLoading ? "Login" : <Loader />}
         </Button>
-        <span className="self-center">Don&apos;t have an account?{' '}
-        <Link href="/signup" className="text-primary">Sign Up</Link>
+        <span className="self-center">
+          Don&apos;t have an account?{" "}
+          <Link href="/signup" className="text-primary">
+            Sign Up
+          </Link>
         </span>
       </form>
-
     </Form>
   );
 };

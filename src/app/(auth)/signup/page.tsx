@@ -18,7 +18,7 @@ import React, { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Logo from "@/public/cypresslogo.svg";
-import Loader from "@/src/components/Loader";
+import Loader from "@/src/components/global/Loader";
 import { Alert, AlertDescription, AlertTitle } from "@/src/components/ui/alert";
 import { MailCheck } from "lucide-react";
 import { FormSchema } from "@/src/lib/types";
@@ -59,7 +59,7 @@ const Signup = () => {
         "border-red-500/50": codeExchangeError,
         "text-red-700": codeExchangeError,
       }),
-    []
+    [codeExchangeError]
   );
 
   const form = useForm<z.infer<typeof SignUpFormSchema>>({
@@ -118,7 +118,7 @@ const Signup = () => {
               disabled={isLoading}
               control={form.control}
               name="email"
-              render={({field}) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <Input type="email" placeholder="Email" {...field} />
@@ -131,7 +131,7 @@ const Signup = () => {
               disabled={isLoading}
               control={form.control}
               name="password"
-              render={({field}) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <Input type="password" placeholder="Password" {...field} />
@@ -144,7 +144,7 @@ const Signup = () => {
               disabled={isLoading}
               control={form.control}
               name="confirmPassword"
-              render={({field}) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <Input
