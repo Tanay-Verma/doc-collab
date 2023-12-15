@@ -65,7 +65,7 @@ const WorkspaceCreator = () => {
           payload: { ...newWorkspace, folders: [] },
         });
         toast({ title: "Success", description: "Created the workspace" });
-        // router.refresh();
+        router.refresh();
       }
       if (permissions === "shared") {
         await createWorkspace(newWorkspace);
