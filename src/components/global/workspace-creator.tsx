@@ -78,7 +78,7 @@ const WorkspaceCreator = () => {
   };
 
   return (
-    <div className="flex gap-4 flex-col">
+    <div className="flex gap-4 flex-col pt-2">
       <div>
         <Label htmlFor="name" className="text-sm text-muted-foreground">
           Name
