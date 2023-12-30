@@ -7,7 +7,7 @@ import React, { useEffect, useState } from "react";
 
 interface SelectedWorkspaceProps {
   workspace: workspace;
-  onClick?: (option:workspace) => void;
+  onClick?: (option: workspace) => void;
 }
 
 const SelectedWorkspace: React.FC<SelectedWorkspaceProps> = ({
@@ -39,10 +39,12 @@ const SelectedWorkspace: React.FC<SelectedWorkspaceProps> = ({
       flex-row 
       p-2 
       gap-4 
-      justify-center 
       cursor-pointer 
+      justify-center 
       items-center 
-      my-2"
+      my-2
+      border
+      "
     >
       <Image
         src={workspaceLogo}
@@ -51,16 +53,16 @@ const SelectedWorkspace: React.FC<SelectedWorkspaceProps> = ({
         height={26}
         objectFit="cover"
       />
-      <div className="flex flex-col">
-        <p 
-            className="text-lg 
-            w-[170px] 
-            overflow-hidden 
-            overflow-ellipsis 
-            whitespace-nowrap">
-                {workspace.title}
-            </p>
-      </div>
+
+      <p
+        className="text-lg 
+          w-[170px] 
+          overflow-hidden 
+          overflow-ellipsis 
+          whitespace-nowrap"
+      >
+        {workspace.title}
+      </p>
     </Link>
   );
 };
