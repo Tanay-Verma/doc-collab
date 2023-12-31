@@ -13,7 +13,7 @@ import EmojiPicker from "../global/emoji-picker";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import { Subscription, workspace } from "@/src/lib/supabase/supabase.types";
+import { Subscription, Workspace } from "@/src/lib/supabase/supabase.types";
 import { CreateWorkspaceFormSchema } from "@/src/lib/types";
 import { z } from "zod";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
@@ -75,7 +75,7 @@ const DashboardSetup: React.FC<DashboardSetupProps> = ({
       }
     }
     try {
-      const newWorkspace: workspace = {
+      const newWorkspace: Workspace = {
         data: null,
         createdAt: new Date().toISOString(),
         iconId: selectedEmoji,

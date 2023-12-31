@@ -1,6 +1,6 @@
 "use client";
 import { useSupabaseUser } from "@/src/lib/providers/supabase-user-provider";
-import { User, workspace } from "@/src/lib/supabase/supabase.types";
+import { User, Workspace } from "@/src/lib/supabase/supabase.types";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { Label } from "../ui/label";
@@ -47,7 +47,7 @@ const WorkspaceCreator = () => {
     setIsLoading(true);
     const uuid = v4();
     if (user?.id) {
-      const newWorkspace: workspace = {
+      const newWorkspace: Workspace = {
         data: null,
         createdAt: new Date().toISOString(),
         iconId: "💼",

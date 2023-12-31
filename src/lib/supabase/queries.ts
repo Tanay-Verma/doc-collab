@@ -1,12 +1,13 @@
 "use server";
 import { files, folders, users, workspaces } from "@/migrations/schema";
 import db from "./db";
-import { File, Folder, Subscription, User, workspace } from "./supabase.types";
+import { File, Folder, Subscription, User, Workspace } from "./supabase.types";
 import { validate } from "uuid";
 import { and, eq, ilike, notExists } from "drizzle-orm";
 import { collaborators } from "./schema";
+import { revalidatePath } from "next/cache";
 
-export const createWorkspace = async (workspace: workspace) => {
+export const createWorkspace = async (workspace: Workspace) => {
   try {
     const response = await db.insert(workspaces).values(workspace);
     return { data: null, error: null };
@@ -15,6 +16,11 @@ export const createWorkspace = async (workspace: workspace) => {
     return { data: null, error: `Error ${error}` };
   }
 };
+
+export const deleteWorkspace = async (workspaceId: string) => {
+  if(!workspaceId) return;
+  await db.delete(workspaces).where(eq(workspaces.id,workspaceId))
+}
 
 export const getUserSubscriptionStatus = async (userId: string) => {
   try {
@@ -88,7 +94,7 @@ export const getPrivateWorkspaces = async (userId: string) => {
         ),
         eq(workspaces.workspaceOwner, userId)
       )
-    )) as workspace[];
+    )) as Workspace[];
   return privateWorkspaces;
 };
 
@@ -108,7 +114,7 @@ export const getCollaboratingWorkspaces = async (userId: string) => {
     .from(users)
     .innerJoin(collaborators, eq(users.id, collaborators.userId))
     .innerJoin(workspaces, eq(collaborators.workspaceId, workspaces.id))
-    .where(eq(users.id, userId))) as workspace[];
+    .where(eq(users.id, userId))) as Workspace[];
   return collaboratedWorkspaces;
 };
 
@@ -129,7 +135,7 @@ export const getSharedWorkspaces = async (userId: string) => {
     .from(workspaces)
     .orderBy(workspaces.createdAt)
     .innerJoin(collaborators, eq(workspaces.id, collaborators.workspaceId))
-    .where(eq(workspaces.workspaceOwner, userId))) as workspace[];
+    .where(eq(workspaces.workspaceOwner, userId))) as Workspace[];
   return sharedWorkspaces;
 };
 
@@ -152,6 +158,27 @@ export const createFolder = async (folder: Folder) => {
     console.log(error);
     return { data: null, error: "Error" };
   }
+};
+
+export const removeCollaborators = async (
+  users: User[],
+  workspaceId: string
+) => {
+  const response = users.forEach(async (user: User) => {
+    const userExists = await db.query.collaborators.findFirst({
+      where: (u, { eq }) =>
+        and(eq(u.userId, user.id), eq(u.workspaceId, workspaceId)),
+    });
+    if (userExists)
+      await db
+        .delete(collaborators)
+        .where(
+          and(
+            eq(collaborators.workspaceId, workspaceId),
+            eq(collaborators.userId, user.id)
+          )
+        );
+  });
 };
 
 export const createFile = async (file: File) => {
@@ -183,6 +210,24 @@ export const updateFile = async (file: Partial<File>, fileId: string) => {
     return { data: null, error: null };
   } catch (error) {
     console.log("Update File Error: ", error);
+    return { data: null, error: "Error" };
+  }
+};
+
+export const updateWorkspace = async (
+  workspace: Partial<Workspace>,
+  workspaceId: string
+) => {
+  if (!workspaceId) return;
+  try {
+    await db
+      .update(workspaces)
+      .set(workspace)
+      .where(eq(workspaces.id, workspaceId));
+    revalidatePath(`/dashboard/${workspaceId}`);
+    return { data: null, error: null };
+  } catch (error) {
+    console.log("Update Workspace Error: ", error);
     return { data: null, error: "Error" };
   }
 };
