@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useToast } from "../ui/use-toast";
 import { useAppState } from "@/src/lib/providers/state-provider";
 import { User, Workspace } from "@/src/lib/supabase/supabase.types";
@@ -37,7 +37,7 @@ const SettingsForm = () => {
   const router = useRouter();
   const supabase = createClientComponentClient();
   const { state, workspaceId, dispatch } = useAppState();
-  const [permissions, setPermissions] = useState("Private");
+  const [permissions, setPermissions] = useState("private");
   const [collaborators, setCollaborators] = useState<User[] | []>([]);
   const [openAlertMessage, setOpenAlertMessage] = useState(false);
   const [workspaceDetails, setWorkspaceDetails] = useState<Workspace>();
@@ -62,7 +62,7 @@ const SettingsForm = () => {
   const removeCollaborator = async (user: User) => {
     if (!workspaceId) return;
     if (collaborators.length === 1) {
-      setPermissions("Private");
+      setPermissions("private");
     }
     await removeCollaborators([user], workspaceId);
     setCollaborators(collaborators.filter((c) => c.id !== user.id));
@@ -105,11 +105,22 @@ const SettingsForm = () => {
     }
   };
   // onClick
+  const onPermissionsChange = (val:string) => {
+    if(val === 'private'){
+      setOpenAlertMessage(true);
+    }else setPermissions(val);
+  }
   // fetching avatar details
   // get workspace details
   // get all the collaborators
   // WIP Payment Portal redirect
 
+  useEffect(() => {
+    const showingWorkspace = state.workspaces.find(
+      (workspace) => workspace.id === workspaceId
+    );
+    if(showingWorkspace) setWorkspaceDetails(showingWorkspace)
+  }, [state, workspaceId]);
   return (
     <div className="flex gap-4 flex-col">
       <p className="flex items-center gap-2 mt-6">
@@ -149,7 +160,10 @@ const SettingsForm = () => {
       </div>
       <>
         <Label htmlFor="permissions">Permissions</Label>
-        <Select>
+        <Select 
+          onValueChange={onPermissionsChange}
+          value = {permissions}
+        >
           <SelectTrigger className="w-full h-26 -mt-3 ">
             <SelectValue />
             <SelectContent>

@@ -1,13 +1,13 @@
 "use client";
-import { workspace } from "@/src/lib/supabase/supabase.types";
+import { Workspace } from "@/src/lib/supabase/supabase.types";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 interface SelectedWorkspaceProps {
-  workspace: workspace;
-  onClick?: (option: workspace) => void;
+  workspace: Workspace;
+  onClick?: (option: Workspace) => void;
 }
 
 const SelectedWorkspace: React.FC<SelectedWorkspaceProps> = ({

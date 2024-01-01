@@ -1,16 +1,16 @@
 "use client";
 import { useAppState } from "@/src/lib/providers/state-provider";
-import { workspace } from "@/src/lib/supabase/supabase.types";
+import { Workspace } from "@/src/lib/supabase/supabase.types";
 import React, { useEffect, useState } from "react";
 import SelectedWorkspace from "./selected-workspace";
 import CustomDialogTrigger from "../global/custom-dialog";
 import WorkspaceCreator from "../global/workspace-creator";
 
 interface WorkspaceDropdownProps {
-  privateWorkspaces: workspace[] | [];
-  sharedWorkspaces: workspace[] | [];
-  collaboratingWorkspaces: workspace[] | [];
-  defaultValue: workspace | undefined;
+  privateWorkspaces: Workspace[] | [];
+  sharedWorkspaces: Workspace[] | [];
+  collaboratingWorkspaces: Workspace[] | [];
+  defaultValue: Workspace | undefined;
 }
 
 const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
@@ -38,10 +38,18 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
     }
   }, [collaboratingWorkspaces, privateWorkspaces, sharedWorkspaces]);
 
-  const handleSelect = (option: workspace) => {
+  const handleSelect = (option: Workspace) => {
     setSelectedOption(option);
     setIsOpen(false);
   };
+
+  useEffect(() => {
+    if(!defaultValue) return
+    const findSelectedWorkspace = state.workspaces.find(
+      (workspace) => workspace.id === defaultValue.id
+    );
+    if(findSelectedWorkspace) setSelectedOption(findSelectedWorkspace)
+  }, [state, defaultValue]);
   return (
     <div
       className="relative inline-block
