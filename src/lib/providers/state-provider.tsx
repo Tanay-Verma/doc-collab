@@ -68,6 +68,21 @@ type Action =
       };
     }
   | {
+      type: "REMOVE_FOLDER";
+      payload: {
+        userEmail: string;
+        workspaceId: string;
+        folderId: string;
+      };
+    }
+  | {
+      type: "RESTORE_FOLDER";
+      payload: {
+        workspaceId: string;
+        folderId: string;
+      };
+    }
+  | {
       type: "UPDATE_FILE";
       payload: {
         file: Partial<File>;
@@ -156,6 +171,56 @@ const appReducer = (
               folders: workspace.folders.map((folder) => {
                 if (folder.id === action.payload.folderId) {
                   return { ...folder, ...action.payload.folder };
+                }
+                return folder;
+              }),
+            };
+          }
+          return workspace;
+        }),
+      };
+    case "REMOVE_FOLDER":
+      return {
+        ...state,
+        workspaces: state.workspaces.map((workspace) => {
+          if (workspace.id === action.payload.workspaceId) {
+            return {
+              ...workspace,
+              folders: workspace.folders.map((folder) => {
+                if (folder.id === action.payload.folderId) {
+                  return {
+                    ...folder,
+                    inTrash: `Deleted by ${action.payload.userEmail}`,
+                    files: folder.files.map((file) => ({
+                      ...file,
+                      inTrash: `Deleted by ${action.payload.userEmail}`,
+                    })),
+                  };
+                }
+                return folder;
+              }),
+            };
+          }
+          return workspace;
+        }),
+      };
+    case "RESTORE_FOLDER":
+      return {
+        ...state,
+        workspaces: state.workspaces.map((workspace) => {
+          if (workspace.id === action.payload.workspaceId) {
+            return {
+              ...workspace,
+              folders: workspace.folders.map((folder) => {
+                if (folder.id === action.payload.folderId) {
+                  return {
+                    ...folder,
+                    inTrash: "",
+                    files: folder.files.map((file) => ({
+                      ...file,
+                      inTrash: "",
+                    })),
+                  };
                 }
                 return folder;
               }),

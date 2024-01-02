@@ -18,9 +18,9 @@ export const createWorkspace = async (workspace: Workspace) => {
 };
 
 export const deleteWorkspace = async (workspaceId: string) => {
-  if(!workspaceId) return;
-  await db.delete(workspaces).where(eq(workspaces.id,workspaceId))
-}
+  if (!workspaceId) return;
+  await db.delete(workspaces).where(eq(workspaces.id, workspaceId));
+};
 
 export const getUserSubscriptionStatus = async (userId: string) => {
   try {
@@ -33,6 +33,76 @@ export const getUserSubscriptionStatus = async (userId: string) => {
     console.log("Error", error);
     return { data: null, error: `Error ${error}` };
   }
+};
+
+export const getWorkspaceDetails = async (workspaceId: string) => {
+  const isValid = validate(workspaceId);
+  if (!isValid)
+    return {
+      data: [],
+      error: "Error",
+    };
+  try {
+    const response = (await db
+      .select()
+      .from(workspaces)
+      .where(eq(workspaces.id, workspaceId))
+      .limit(1)) as Workspace[];
+    return { data: response, error: null };
+  } catch (error) {
+    console.log("Get Workspace Details Error: ", error);
+    return { data: [], error: "Error" };
+  }
+};
+
+export const getFolderDetails = async (folderId: string) => {
+  const isValid = validate(folderId);
+  if (!isValid)
+    return {
+      data: [],
+      error: "Error",
+    };
+  try {
+    const response = (await db
+      .select()
+      .from(folders)
+      .where(eq(folders.id, folderId))
+      .limit(1)) as Folder[];
+    return { data: response, error: null };
+  } catch (error) {
+    console.log("Get Folder Details Error: ", error);
+    return { data: [], error: "Error" };
+  }
+};
+
+export const getFileDetails = async (fileId: string) => {
+  const isValid = validate(fileId);
+  if (!isValid)
+    return {
+      data: [],
+      error: "Error",
+    };
+  try {
+    const response = (await db
+      .select()
+      .from(files)
+      .where(eq(files.id, fileId))
+      .limit(1)) as File[];
+    return { data: response, error: null };
+  } catch (error) {
+    console.log("Get Folder Details Error: ", error);
+    return { data: [], error: "Error" };
+  }
+};
+
+export const deleteFile = async (fileId: string) => {
+  if (!fileId) return;
+  await db.delete(files).where(eq(files.id, fileId));
+};
+
+export const deleteFolder = async (folderId: string) => {
+  if (!folderId) return;
+  await db.delete(folders).where(eq(folders.id, folderId));
 };
 
 export const getFiles = async (folderId: string) => {
@@ -203,6 +273,42 @@ export const updateFolder = async (
     return { data: null, error: "Error" };
   }
 };
+
+export const removeFolder = async (userEmail: string, folderId: string) => {
+  try {
+    await db
+      .update(folders)
+      .set({ inTrash: `Deleted by ${userEmail}` })
+      .where(eq(folders.id, folderId));
+    await db
+      .update(files)
+      .set({ inTrash: `Deleted by ${userEmail}` })
+      .where(eq(files.folderId, folderId));
+
+    return { data: null, error: null };
+  } catch (error) {
+    console.log("Remove Folder Error", error);
+    return { data: null, error: "Error" };
+  }
+};
+
+export const restoreFolder = async (folderId:string) => {
+  try {
+    await db
+      .update(folders)
+      .set({ inTrash: "" })
+      .where(eq(folders.id, folderId));
+    await db
+      .update(files)
+      .set({ inTrash: "" })
+      .where(eq(files.folderId, folderId));
+
+    return { data: null, error: null };
+  } catch (error) {
+    console.log("Remove Folder Error", error);
+    return { data: null, error: "Error" };
+  }
+}
 
 export const updateFile = async (file: Partial<File>, fileId: string) => {
   try {

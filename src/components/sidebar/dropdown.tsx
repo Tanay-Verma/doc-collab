@@ -12,6 +12,7 @@ import clsx from "clsx";
 import EmojiPicker from "../global/emoji-picker";
 import {
   createFile,
+  removeFolder,
   updateFile,
   updateFolder,
 } from "@/src/lib/supabase/queries";
@@ -76,7 +77,11 @@ const Dropdown: React.FC<DropdownProps> = ({
       router.push(`/dashboard/${workspaceId}/${accordionId}`);
     }
     if (type === "file") {
-      router.push(`/dashboard/${workspaceId}/${folderId}/${accordionId}`);
+      router.push(
+        `/dashboard/${workspaceId}/${folderId}/${
+          accordionId.split("folder")[1]
+        }`
+      );
     }
   };
   // add a file
@@ -179,17 +184,15 @@ const Dropdown: React.FC<DropdownProps> = ({
     const pathId = id.split("folder");
     if (listType === "folder") {
       dispatch({
-        type: "UPDATE_FOLDER",
+        type: "REMOVE_FOLDER",
         payload: {
-          folder: { inTrash: `Deleted by ${user?.email}` },
+          userEmail: user?.email,
           folderId: pathId[0],
           workspaceId,
         },
       });
-      const { data, error } = await updateFolder(
-        { inTrash: `Deleted by ${user?.email}` },
-        pathId[0]
-      );
+      const { data, error } = await removeFolder(user?.email, pathId[0]);
+
       if (error) {
         toast({
           title: "Error",
@@ -211,7 +214,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           file: { inTrash: `Deleted by ${user?.email}` },
           folderId: pathId[0],
           workspaceId,
-          fileId:pathId[1]
+          fileId: pathId[1],
         },
       });
       const { data, error } = await updateFile(
@@ -231,7 +234,6 @@ const Dropdown: React.FC<DropdownProps> = ({
         });
       }
     }
-    
   };
   const isFolder = listType === "folder";
 
