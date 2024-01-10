@@ -90,7 +90,7 @@ export const getFileDetails = async (fileId: string) => {
       .limit(1)) as File[];
     return { data: response, error: null };
   } catch (error) {
-    console.log("Get Folder Details Error: ", error);
+    console.log("Get Filder Details Error: ", error);
     return { data: [], error: "Error" };
   }
 };
@@ -152,6 +152,7 @@ export const getPrivateWorkspaces = async (userId: string) => {
       data: workspaces.inTrash,
       inTrash: workspaces.inTrash,
       logo: workspaces.logo,
+      bannerUrl: workspaces.bannerUrl,
     })
     .from(workspaces)
     .where(
@@ -180,6 +181,7 @@ export const getCollaboratingWorkspaces = async (userId: string) => {
       data: workspaces.inTrash,
       inTrash: workspaces.inTrash,
       logo: workspaces.logo,
+      bannerUrl: workspaces.bannerUrl,
     })
     .from(users)
     .innerJoin(collaborators, eq(users.id, collaborators.userId))
@@ -201,6 +203,7 @@ export const getSharedWorkspaces = async (userId: string) => {
       data: workspaces.inTrash,
       inTrash: workspaces.inTrash,
       logo: workspaces.logo,
+      bannerUrl: workspaces.bannerUrl,
     })
     .from(workspaces)
     .orderBy(workspaces.createdAt)
@@ -292,7 +295,7 @@ export const removeFolder = async (userEmail: string, folderId: string) => {
   }
 };
 
-export const restoreFolder = async (folderId:string) => {
+export const restoreFolder = async (folderId: string) => {
   try {
     await db
       .update(folders)
@@ -308,7 +311,7 @@ export const restoreFolder = async (folderId:string) => {
     console.log("Remove Folder Error", error);
     return { data: null, error: "Error" };
   }
-}
+};
 
 export const updateFile = async (file: Partial<File>, fileId: string) => {
   try {
