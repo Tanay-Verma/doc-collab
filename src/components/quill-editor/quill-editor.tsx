@@ -14,9 +14,9 @@ import {
 import { File, Folder, Workspace } from "@/src/lib/supabase/supabase.types";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import "quill/dist/quill.snow.css";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import BannerUpload from "../banner-upload/banner-upload";
 import EmojiPicker from "../global/emoji-picker";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -29,6 +29,7 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import { XCircleIcon } from "lucide-react";
+import { useSocket } from "@/src/lib/providers/socket-provide";
 interface QuillEditorProps {
   dirDetails: File | Folder | Workspace;
   fileId: string;
@@ -61,7 +62,9 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
   fileId,
 }) => {
   const supabase = createClientComponentClient();
+  const router = useRouter();
   const { state, workspaceId, folderId, dispatch } = useAppState();
+  const { socket } = useSocket();
   const [quill, setQuill] = useState<any>(null);
   const pathName = usePathname();
   const [collaborators, setCollaborators] = useState<
@@ -275,6 +278,72 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
     }
     setDeletingBanner(false);
   };
+
+  useEffect(() => {
+    if (!fileId) return;
+    const fetchInformation = async () => {
+      if (dirType === "file") {
+        const { data: selectedDir, error } = await getFileDetails(fileId);
+        if (error || !selectedDir) {
+          return router.replace("/dashboard");
+        }
+        if (!selectedDir[0]) {
+          if (!workspaceId) return;
+          return router.replace(`/dashboard/${workspaceId}`);
+        }
+        if (!workspaceId || quill === null) return;
+        if (!selectedDir[0].data) return;
+        quill.setContents(JSON.parse(selectedDir[0].data || ""));
+        dispatch({
+          type: "UPDATE_FILE",
+          payload: {
+            file: { data: selectedDir[0].data },
+            fileId,
+            folderId: selectedDir[0].folderId,
+            workspaceId,
+          },
+        });
+      }
+      if (dirType === "folder") {
+        const { data: selectedDir, error } = await getFolderDetails(fileId);
+        if (error || !selectedDir) {
+          return router.replace("/dashboard");
+        }
+        if (!selectedDir[0]) {
+          router.replace(`/dashboard/${workspaceId}`);
+        }
+        if (quill === null) return;
+        if (!selectedDir[0].data) return;
+        quill.setContents(JSON.parse(selectedDir[0].data || ""));
+        dispatch({
+          type: "UPDATE_FOLDER",
+          payload: {
+            folder: { data: selectedDir[0].data },
+            folderId: fileId,
+            workspaceId: selectedDir[0].workspaceId,
+          },
+        });
+      }
+      if (dirType === "workspace") {
+        const { data: selectedDir, error } = await getWorkspaceDetails(fileId);
+        if (error || !selectedDir) {
+          return router.replace("/dashboard");
+        }
+        if (!selectedDir[0] || quill === null) return;
+        if (!selectedDir[0].data) return;
+        quill.setContents(JSON.parse(selectedDir[0].data || ""));
+        dispatch({
+          type: "UPDATE_WORKSPACE",
+          payload: {
+            workspace: { data: selectedDir[0].data },
+            workspaceId: fileId,
+          },
+        });
+      }
+    };
+    fetchInformation();
+  }, [fileId, workspaceId, quill, dirType]);
+
   return (
     <>
       <div className="relative">
