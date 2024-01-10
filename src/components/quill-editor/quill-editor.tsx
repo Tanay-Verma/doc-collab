@@ -273,6 +273,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       });
       await updateWorkspace({ bannerUrl: "" }, fileId);
     }
+    setDeletingBanner(false);
   };
   return (
     <>
@@ -477,6 +478,12 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
               </Button>
             )}
           </div>
+          <span className="text-muted-foreground text-3xl font-bold h-9">
+            {details.title}
+          </span>
+          <span className="text-muted-foreground text-sm">
+            {dirType.toUpperCase()}
+          </span>
         </div>
         <div id="container" className="max-[800px]" ref={wrapperRef}></div>
       </div>
