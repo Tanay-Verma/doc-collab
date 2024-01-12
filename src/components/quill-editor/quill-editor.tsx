@@ -16,7 +16,13 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import "quill/dist/quill.snow.css";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import BannerUpload from "../banner-upload/banner-upload";
 import EmojiPicker from "../global/emoji-picker";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -28,8 +34,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
-import { XCircleIcon } from "lucide-react";
+import { FileDiff, XCircleIcon } from "lucide-react";
 import { useSocket } from "@/src/lib/providers/socket-provide";
+import { useSupabaseUser } from "@/src/lib/providers/supabase-user-provider";
 interface QuillEditorProps {
   dirDetails: File | Folder | Workspace;
   fileId: string;
@@ -64,7 +71,9 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
   const supabase = createClientComponentClient();
   const router = useRouter();
   const { state, workspaceId, folderId, dispatch } = useAppState();
-  const { socket } = useSocket();
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const { user } = useSupabaseUser();
+  const { socket, isConnected } = useSocket();
   const [quill, setQuill] = useState<any>(null);
   const pathName = usePathname();
   const [collaborators, setCollaborators] = useState<
@@ -343,6 +352,75 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
     };
     fetchInformation();
   }, [fileId, workspaceId, quill, dirType]);
+
+  // rooms
+  useEffect(() => {
+    if (socket === null || quill === null || !fileId) return;
+    socket.emit("create-room", fileId);
+  }, [socket, quill, fileId]);
+
+  // send quill changes to all clients
+  useEffect(() => {
+    if (quill === null || socket === null || !fileId || !user) return;
+
+    // WIP - Cursors update
+    const selectionChangeHandler = () => {};
+    const quillHandler = (delta: any, oldDelta: any, source: any) => {
+      if (source !== "user") return;
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+      setSaving(true);
+      const contents = quill.getContents();
+      const quillLength = quill.getLength();
+      saveTimerRef.current = setTimeout(async () => {
+        if (contents && quillLength !== 1 && fileId) {
+          if (dirType === "workspace") {
+            dispatch({
+              type: "UPDATE_WORKSPACE",
+              payload: {
+                workspace: { data: JSON.stringify(contents) },
+                workspaceId: fileId,
+              },
+            });
+            await updateWorkspace({ data: JSON.stringify(contents) }, fileId);
+          }
+          if (dirType === "folder") {
+            if (!workspaceId) return;
+            dispatch({
+              type: "UPDATE_FOLDER",
+              payload: {
+                folder: { data: JSON.stringify(contents) },
+                folderId: fileId,
+                workspaceId,
+              },
+            });
+            await updateFolder({ data: JSON.stringify(contents) }, fileId);
+          }
+          if (dirType === "file") {
+            if (!workspaceId || !folderId) return;
+            dispatch({
+              type: "UPDATE_FILE",
+              payload: {
+                file: { data: JSON.stringify(contents) },
+                fileId,
+                folderId,
+                workspaceId,
+              },
+            });
+            await updateFile({ data: JSON.stringify(contents) }, fileId);
+          }
+        }
+        setSaving(false);
+      }, 850);
+      socket.emit("send-changes", delta, fileId);
+    };
+    quill.on("text-change", quillHandler);
+    // WIP - Cursors selected handler
+    return () => {
+      quill.off("text-change", quillHandler);
+      // WIP - Cursors
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    };
+  }, [quill, socket, fileId, user, details, workspaceId, folderId]);
 
   return (
     <>
