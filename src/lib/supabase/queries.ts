@@ -272,6 +272,13 @@ export const removeCollaborators = async (
   });
 };
 
+export const findUser = async (userId: string) => {
+  const response = await db.query.users.findFirst({
+    where: (u, { eq }) => eq(u.id, userId),
+  });
+  return response;
+};
+
 export const createFile = async (file: File) => {
   try {
     await db.insert(files).values(file);
