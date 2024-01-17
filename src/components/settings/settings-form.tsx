@@ -6,13 +6,22 @@ import { User, Workspace } from "@/src/lib/supabase/supabase.types";
 import { useSupabaseUser } from "@/src/lib/providers/supabase-user-provider";
 import { useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { Briefcase, Lock, Plus, Share } from "lucide-react";
+import {
+  Briefcase,
+  CreditCard,
+  Lock,
+  LogOut,
+  Plus,
+  Share,
+  User as UserIcon,
+} from "lucide-react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import {
   addCollaborators,
   deleteWorkspace,
   getCollaborators,
+  getUserAvatarUrl,
   removeCollaborators,
   updateWorkspace,
 } from "@/src/lib/supabase/queries";
@@ -43,10 +52,12 @@ import { Button } from "../ui/button";
 import { ScrollArea } from "../ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Alert, AlertDescription } from "../ui/alert";
+import CypressProfileIcon from "../icons/cypressProfileIcon";
+import LogoutButton from "../global/logout-button";
 
 const SettingsForm = () => {
   const { toast } = useToast();
-  const { user } = useSupabaseUser();
+  const { user, subscription } = useSupabaseUser();
   const router = useRouter();
   const supabase = createClientComponentClient();
   const { state, workspaceId, dispatch } = useAppState();
@@ -57,6 +68,7 @@ const SettingsForm = () => {
   const titleTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const [uploadingProfilePic, setUploadingProfilePic] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState("");
   // WIP PAYMENT PORTAL
 
   // add collaborators
@@ -119,13 +131,13 @@ const SettingsForm = () => {
 
   // onClick
   const onClickAlertConfirm = async () => {
-    if(!workspaceId) return;
+    if (!workspaceId) return;
     if (collaborators.length > 0) {
       await removeCollaborators(collaborators, workspaceId);
     }
-    setPermissions('private');
+    setPermissions("private");
     setOpenAlertMessage(false);
-  }
+  };
   const onPermissionsChange = (val: string) => {
     if (val === "private") {
       setOpenAlertMessage(true);
@@ -136,6 +148,16 @@ const SettingsForm = () => {
   // get workspace details
   // get all the collaborators
   // WIP Payment Portal redirect
+
+  useEffect(() => {
+    const getAvatarUrl = async () => {
+      if (!user) return "";
+      const {data, error} = await getUserAvatarUrl(user.id);
+      if(data?.avatarUrl) setAvatarUrl(data.avatarUrl);
+      else setAvatarUrl('');
+    };
+    getAvatarUrl();
+  }, [user]);
 
   useEffect(() => {
     const showingWorkspace = state.workspaces.find(
@@ -333,6 +355,56 @@ const SettingsForm = () => {
             Delete Workspace
           </Button>
         </Alert>
+        <p className="flex items-center gap-2 mt-6">
+          <UserIcon size={20} /> Profile
+        </p>
+        <Separator />
+        <div className="flex items-center">
+          <Avatar>
+            <AvatarImage
+              src={
+                supabase.storage
+                  .from("avatars")
+                  .getPublicUrl(avatarUrl).data.publicUrl
+              }
+            />
+            <AvatarFallback>
+              <CypressProfileIcon />
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col ml-6">
+            <small className="text-muted-foreground cursor-not-allowed">
+              {user ? user.email : ""}
+            </small>
+            <Label
+              htmlFor="profilePicture"
+              className="text-sm text-muted-foreground"
+            >
+              Profile Picture
+            </Label>
+            <Input
+              name="profilePicture"
+              type="file"
+              accept="image/*"
+              placeholder="Profile Picture"
+              // onChange={onChangeProfilePicture}
+              disabled={uploadingProfilePic}
+            />
+          </div>
+        </div>
+        <LogoutButton>
+          <div className="flex items-center">
+            <LogOut />
+          </div>
+        </LogoutButton>
+        <p className="flex items-center gap-2 mt-6">
+          <CreditCard size={20} /> Billing & Plan
+        </p>
+        <Separator />
+        <p className="text-muted-foreground">
+          You are currently on a{" "}
+          {subscription?.status === "active" ? "Pro" : "Free"} Plan
+        </p>
       </>
       <AlertDialog open={openAlertMessage}>
         <AlertDialogContent>

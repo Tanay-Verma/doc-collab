@@ -373,3 +373,17 @@ export const getUsersFromSearch = async (email: string) => {
     .where(ilike(users.email, `${email}%`));
   return accounts;
 };
+
+export const getUserAvatarUrl = async (userId: string) => {
+  if (!userId) return {data:{avatarUrl:null},error:null};
+  try {
+    const avatarUrl: { avatarUrl: string | null }[] = await db
+      .select({ avatarUrl: users.avatarUrl })
+      .from(users)
+      .where(eq(users.id, userId));
+    return {data: avatarUrl[0], error:null};
+  } catch (error) {
+    console.log("Avatar URL Error:", error)
+    return {data: null, error:"Error"};
+  }
+};
