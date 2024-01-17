@@ -204,6 +204,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
         payload: { fileId, folderId, workspaceId },
       });
       await deleteFile(fileId);
+      router.replace(`/dashboard/${workspaceId}`)
     }
     if (dirType === "folder") {
       if (!workspaceId) return;
@@ -212,6 +213,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
         payload: { folderId: fileId, workspaceId },
       });
       await deleteFolder(fileId);
+      router.replace(`/dashboard/${workspaceId}`)
     }
   };
 
