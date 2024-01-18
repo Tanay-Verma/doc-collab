@@ -375,15 +375,25 @@ export const getUsersFromSearch = async (email: string) => {
 };
 
 export const getUserAvatarUrl = async (userId: string) => {
-  if (!userId) return {data:{avatarUrl:null},error:null};
+  if (!userId) return { data: { avatarUrl: null }, error: null };
   try {
     const avatarUrl: { avatarUrl: string | null }[] = await db
       .select({ avatarUrl: users.avatarUrl })
       .from(users)
       .where(eq(users.id, userId));
-    return {data: avatarUrl[0], error:null};
+    return { data: avatarUrl[0], error: null };
   } catch (error) {
-    console.log("Avatar URL Error:", error)
-    return {data: null, error:"Error"};
+    console.log("Avatar URL Error:", error);
+    return { data: null, error: "Error" };
+  }
+};
+
+export const updateUser = async (user: Partial<User>, userId: string) => {
+  try {
+    await db.update(users).set(user).where(eq(users.id, userId));
+    return { data: null, error: null };
+  } catch (error) {
+    console.log("Update User Error:", error);
+    return { data: null, error: "Error" };
   }
 };

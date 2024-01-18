@@ -23,6 +23,7 @@ import {
   getCollaborators,
   getUserAvatarUrl,
   removeCollaborators,
+  updateUser,
   updateWorkspace,
 } from "@/src/lib/supabase/queries";
 import { v4 } from "uuid";
@@ -143,6 +144,60 @@ const SettingsForm = () => {
       setOpenAlertMessage(true);
     } else setPermissions(val);
   };
+
+  const onChangeProfilePicture = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if(e.target.files === null) return;
+    const file = e.target.files[0];
+    let filePath = "";
+    const uploadAvatar = async () => {
+      const { data, error } = await supabase.storage
+        .from("avatars")
+        .upload(`avatar-${v4()}`, file, { cacheControl: "5", upsert: true });
+
+      if (error) throw error;
+      filePath = data.path;
+    };
+
+    const deleteAvatar = async (avatarUrl: string) => {
+      const { data, error } = await supabase.storage
+        .from("avatars")
+        .remove([avatarUrl]);
+      if (error) throw error;
+      console.log("Avatar Delete Data:", data);
+    };
+
+    try {
+      if (!avatarUrl) {
+        await uploadAvatar();
+      } else {
+        await deleteAvatar(avatarUrl);
+        await uploadAvatar();
+      }
+      setAvatarUrl(filePath);
+      if (!user) return;
+      const { data, error } = await updateUser(
+        { avatarUrl: filePath },
+        user.id
+      );
+      if (error) {
+        toast({
+          title: "Error",
+          variant: "destructive",
+          description: "Could not update the profile picture",
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: "Updated the profile picture",
+        });
+      }
+    } catch (error) {
+      console.log("Error in uploading profile picture:");
+      console.log(error)
+    }
+  };
   // fetching avatar details
 
   // get workspace details
@@ -152,9 +207,9 @@ const SettingsForm = () => {
   useEffect(() => {
     const getAvatarUrl = async () => {
       if (!user) return "";
-      const {data, error} = await getUserAvatarUrl(user.id);
-      if(data?.avatarUrl) setAvatarUrl(data.avatarUrl);
-      else setAvatarUrl('');
+      const { data, error } = await getUserAvatarUrl(user.id);
+      if (data?.avatarUrl) setAvatarUrl(data.avatarUrl);
+      else setAvatarUrl("");
     };
     getAvatarUrl();
   }, [user]);
@@ -266,10 +321,10 @@ const SettingsForm = () => {
                 addCollaborator(user);
               }}
             >
-              <Button type="button" className="text-sm mt-4 w-full">
+              <div className="text-sm mt-4 w-full flex justify-center items-center gap-[1px] bg-[#6D28D9] p-2 rounded-md">
                 <Plus />
                 Add Collaborators
-              </Button>
+              </div>
             </CollaboratorSearch>
             <div className="mt-4">
               <span className="text-sm text-muted-foreground">
@@ -363,9 +418,8 @@ const SettingsForm = () => {
           <Avatar>
             <AvatarImage
               src={
-                supabase.storage
-                  .from("avatars")
-                  .getPublicUrl(avatarUrl).data.publicUrl
+                supabase.storage.from("avatars").getPublicUrl(avatarUrl).data
+                  .publicUrl
               }
             />
             <AvatarFallback>
@@ -387,16 +441,16 @@ const SettingsForm = () => {
               type="file"
               accept="image/*"
               placeholder="Profile Picture"
-              // onChange={onChangeProfilePicture}
+              onChange={onChangeProfilePicture}
               disabled={uploadingProfilePic}
             />
           </div>
         </div>
-        <LogoutButton>
+        {/* <LogoutButton>
           <div className="flex items-center">
             <LogOut />
           </div>
-        </LogoutButton>
+        </LogoutButton> */}
         <p className="flex items-center gap-2 mt-6">
           <CreditCard size={20} /> Billing & Plan
         </p>
