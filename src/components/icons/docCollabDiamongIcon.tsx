@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 
-interface CypressDiamondIconProps {}
-const CypressDiamondIcon: FC<CypressDiamondIconProps> = () => {
+interface DocCollabDiamondIconProps {}
+const DocCollabDiamondIcon: FC<DocCollabDiamondIconProps> = () => {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -20,4 +20,4 @@ const CypressDiamondIcon: FC<CypressDiamondIconProps> = () => {
   );
 };
 
-export default CypressDiamondIcon;
+export default DocCollabDiamondIcon;

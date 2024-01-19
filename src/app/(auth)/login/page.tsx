@@ -15,7 +15,7 @@ import {
 } from "@/src/components/ui/form";
 import Link from "next/link";
 import Image from "next/image";
-import Logo from "@/public/cypresslogo.svg";
+import DocCollabLogo from '@/public/DocCollabLogo.svg'
 import { Input } from "@/src/components/ui/input";
 import { Button } from "@/src/components/ui/button";
 import Loader from "@/src/components/global/Loader";
@@ -59,12 +59,12 @@ const LoginPage = () => {
         justify-left
         items-center"
         >
-          <Image src={Logo} alt="cypress Logo" width={50} height={50} />
+          <Image src={DocCollabLogo} alt="DocCollab Logo" width={50} height={50} />
           <span
             className="font-semibold
             dark:text-white text-4xl first-letter:ml-2"
           >
-            cypress.
+            Doc Collab.
           </span>
         </Link>
         <FormDescription

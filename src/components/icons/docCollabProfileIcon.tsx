@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 
-interface CypressProfileIconProps {}
-const CypressProfileIcon: FC<CypressProfileIconProps> = () => {
+interface DocCollabProfileIconProps {}
+const DocCollabProfileIcon: FC<DocCollabProfileIconProps> = () => {
   return (
     <svg
       width="24"
@@ -25,4 +25,4 @@ const CypressProfileIcon: FC<CypressProfileIconProps> = () => {
   );
 };
 
-export default CypressProfileIcon;
+export default DocCollabProfileIcon;

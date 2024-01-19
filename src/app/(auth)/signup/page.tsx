@@ -17,7 +17,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import React, { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import Logo from "@/public/cypresslogo.svg";
+import Logo from "@/public/DocCollabLogo.svg";
 import Loader from "@/src/components/global/Loader";
 import { Alert, AlertDescription, AlertTitle } from "@/src/components/ui/alert";
 import { MailCheck } from "lucide-react";
@@ -98,12 +98,12 @@ const Signup = () => {
         justify-left
         items-center"
         >
-          <Image src={Logo} alt="cypress Logo" width={50} height={50} />
+          <Image src={Logo} alt="DocCollab Logo" width={50} height={50} />
           <span
             className="font-semibold
             dark:text-white text-4xl first-letter:ml-2"
           >
-            cypress.
+            Doc Collab.
           </span>
         </Link>
         <FormDescription

@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 
-interface CypressMarketPlaceIconProps {}
-const CypressMarketPlaceIcon: FC<CypressMarketPlaceIconProps> = () => {
+interface DocCollabMarketPlaceIconProps {}
+const DocCollabMarketPlaceIcon: FC<DocCollabMarketPlaceIconProps> = () => {
   return (
     <svg
       width="24"
@@ -24,4 +24,4 @@ const CypressMarketPlaceIcon: FC<CypressMarketPlaceIconProps> = () => {
   );
 };
 
-export default CypressMarketPlaceIcon;
+export default DocCollabMarketPlaceIcon;

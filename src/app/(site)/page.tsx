@@ -64,7 +64,7 @@ const HomePage = () => {
             text-2xl
             bg-background"
           >
-            Get Cypress Free
+            Get Doc Collab Free
           </Button>
         </div>
         <div
@@ -298,6 +298,7 @@ const HomePage = () => {
                 <CardTitle className="text-2xl font-semibold">
                   {card.planType === PRICING_PLANS.proplan && (
                     <>
+                       
                       <div
                         className="hidden dark:block w-full blur-[120px] rounded-full h-32
                         absolute
@@ -305,13 +306,12 @@ const HomePage = () => {
                         -z-10
                         top-0
                         "
-                      >
-                        <Image
+                      />
+                       <Image
                           src={Diamond}
                           alt="Pro Plan Icon"
                           className="absolute top-6 right-6"
                         />
-                      </div>
                     </>
                   )}
                   {card.planType}

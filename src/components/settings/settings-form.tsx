@@ -1,22 +1,6 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
-import { useToast } from "../ui/use-toast";
 import { useAppState } from "@/src/lib/providers/state-provider";
-import { User, Workspace } from "@/src/lib/supabase/supabase.types";
 import { useSupabaseUser } from "@/src/lib/providers/supabase-user-provider";
-import { useRouter } from "next/navigation";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import {
-  Briefcase,
-  CreditCard,
-  Lock,
-  LogOut,
-  Plus,
-  Share,
-  User as UserIcon,
-} from "lucide-react";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
 import {
   addCollaborators,
   deleteWorkspace,
@@ -26,34 +10,48 @@ import {
   updateUser,
   updateWorkspace,
 } from "@/src/lib/supabase/queries";
-import { v4 } from "uuid";
+import { User, Workspace } from "@/src/lib/supabase/supabase.types";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectValue,
-} from "../ui/select";
+  Briefcase,
+  CreditCard,
+  Lock,
+  LogOut,
+  Plus,
+  Share,
+  User as UserIcon
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useRef, useState } from "react";
+import { v4 } from "uuid";
 import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
+  AlertDialogTitle
 } from "../ui/alert-dialog";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { useToast } from "../ui/use-toast";
 
-import { Separator } from "../ui/seperator";
 import CollaboratorSearch from "../global/collaborator-search";
+import DocCollabProfileIcon from "../icons/docCollabProfileIcon";
+import { Alert, AlertDescription } from "../ui/alert";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { ScrollArea } from "../ui/scroll-area";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Alert, AlertDescription } from "../ui/alert";
-import CypressProfileIcon from "../icons/cypressProfileIcon";
+import { Separator } from "../ui/seperator";
 import LogoutButton from "../global/logout-button";
 
 const SettingsForm = () => {
@@ -423,7 +421,7 @@ const SettingsForm = () => {
               }
             />
             <AvatarFallback>
-              <CypressProfileIcon />
+              <DocCollabProfileIcon />
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col ml-6">
@@ -446,11 +444,11 @@ const SettingsForm = () => {
             />
           </div>
         </div>
-        {/* <LogoutButton>
+        <LogoutButton>
           <div className="flex items-center">
             <LogOut />
           </div>
-        </LogoutButton> */}
+        </LogoutButton>
         <p className="flex items-center gap-2 mt-6">
           <CreditCard size={20} /> Billing & Plan
         </p>

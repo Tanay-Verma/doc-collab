@@ -15,7 +15,7 @@ const SelectedWorkspace: React.FC<SelectedWorkspaceProps> = ({
   workspace,
 }) => {
   const supabase = createClientComponentClient();
-  const [workspaceLogo, setWorkspaceLogo] = useState("/cypresslogo.svg");
+  const [workspaceLogo, setWorkspaceLogo] = useState("/DocCollabLogo.svg");
 
   useEffect(() => {
     if (workspace.logo) {

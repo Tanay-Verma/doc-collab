@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 
-interface CypressTrashIconProps {}
-const CypressTrashIcon: FC<CypressTrashIconProps> = () => {
+interface DocCollabPageIconProps {}
+const DocCollabPageIcon: FC<DocCollabPageIconProps> = () => {
   return (
     <svg
       width="24"
@@ -11,29 +11,27 @@ const CypressTrashIcon: FC<CypressTrashIconProps> = () => {
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M4 7H20V19C20 20.6569 18.6569 22 17 22H7C5.34315 22 4 20.6569 4 19V7Z"
+        d="M3 5C3 3.34315 4.34315 2 6 2H15.7574C16.553 2 17.3161 2.31607 17.8787 2.87868L20.1213 5.12132C20.6839 5.68393 21 6.44699 21 7.24264V19C21 20.6569 19.6569 22 18 22H6C4.34315 22 3 20.6569 3 19V5Z"
         className={`dark:fill-[#2B2939] fill-[#D3D3D3] text-xl transition-all group-hover/native:fill-washed-purple-400`}
       />
       <path
         fillRule="evenodd"
         clipRule="evenodd"
-        d="M9 10C9.55228 10 10 10.4477 10 11V18C10 18.5523 9.55228 19 9 19C8.44772 19 8 18.5523 8 18V11C8 10.4477 8.44772 10 9 10Z"
+        d="M7 11C7 10.4477 7.44772 10 8 10H16C16.5523 10 17 10.4477 17 11C17 11.5523 16.5523 12 16 12H8C7.44772 12 7 11.5523 7 11Z"
         className={`dark:fill-[#817EB5]  fill-Neutrals/neutrals-7 transition-all group-hover/native:fill-washed-blue-500`}
       />
       <path
         fillRule="evenodd"
         clipRule="evenodd"
-        d="M15 10C15.5523 10 16 10.4477 16 11V18C16 18.5523 15.5523 19 15 19C14.4477 19 14 18.5523 14 18V11C14 10.4477 14.4477 10 15 10Z"
+        d="M7 15C7 14.4477 7.44772 14 8 14H12C12.5523 14 13 14.4477 13 15C13 15.5523 12.5523 16 12 16H8C7.44772 16 7 15.5523 7 15Z"
         className={`dark:fill-[#817EB5]  fill-Neutrals/neutrals-7 transition-all group-hover/native:fill-washed-blue-500`}
       />
       <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M7 5C7 3.34315 8.34315 2 10 2H14C15.6569 2 17 3.34315 17 5H21C21.5523 5 22 5.44772 22 6C22 6.55228 21.5523 7 21 7H3C2.44772 7 2 6.55228 2 6C2 5.44772 2.44772 5 3 5H7ZM10 4H14C14.5523 4 15 4.44772 15 5H9C9 4.44772 9.44772 4 10 4Z"
+        d="M17.7071 2.70711L20.2929 5.29289C20.7456 5.74565 21 6.35971 21 7H18C16.8954 7 16 6.10457 16 5V2C16.6403 2 17.2544 2.25435 17.7071 2.70711Z"
         className={`dark:fill-[#817EB5]  fill-Neutrals/neutrals-7 transition-all group-hover/native:fill-washed-blue-500`}
       />
     </svg>
   );
 };
 
-export default CypressTrashIcon;
+export default DocCollabPageIcon;
