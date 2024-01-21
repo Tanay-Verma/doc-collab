@@ -15,6 +15,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import {
   Briefcase,
   CreditCard,
+  ExternalLink,
   Lock,
   LogOut,
   Plus,
@@ -53,10 +54,13 @@ import { Button } from "../ui/button";
 import { ScrollArea } from "../ui/scroll-area";
 import { Separator } from "../ui/seperator";
 import LogoutButton from "../global/logout-button";
+import Link from "next/link";
+import { useSubscriptionModal } from "@/src/lib/providers/subscription-modal-provider";
 
 const SettingsForm = () => {
   const { toast } = useToast();
   const { user, subscription } = useSupabaseUser();
+  const {open, setOpen} = useSubscriptionModal();
   const router = useRouter();
   const supabase = createClientComponentClient();
   const { state, workspaceId, dispatch } = useAppState();
@@ -457,6 +461,36 @@ const SettingsForm = () => {
           You are currently on a{" "}
           {subscription?.status === "active" ? "Pro" : "Free"} Plan
         </p>
+        <Link href="/" target='_blank' className="text-muted-foreground flex flex-row items-center gap-2">
+          View Plans <ExternalLink size={16}/>
+        </Link>
+        {subscription?.status === 'active' ? (
+          <div>
+            <Button 
+              type="button"
+              size="sm"
+              variant={'secondary'}
+              // disabled={loadingPortal}
+              className="text-sm"
+              // WIP onClick={redirectToCustomerPortal}
+            >
+              Manage Subscription
+            </Button>
+          </div>
+        ): (
+          <div>
+            <Button 
+              type="button"
+              size="sm"
+              variant={'secondary'}
+              className="text-sm"
+              onClick={() => setOpen(true)
+              }
+            >
+              Start Plan
+            </Button>
+          </div>
+        )}
       </>
       <AlertDialog open={openAlertMessage}>
         <AlertDialogContent>
