@@ -1,7 +1,7 @@
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import React, { useEffect } from "react";
-import { useAppState } from "../providers/state-provider";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useAppState } from "../providers/state-provider";
 import { File } from "../supabase/supabase.types";
 
 const useSupabaseRealtime = () => {

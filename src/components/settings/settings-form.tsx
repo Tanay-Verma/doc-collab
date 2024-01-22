@@ -20,7 +20,7 @@ import {
   LogOut,
   Plus,
   Share,
-  User as UserIcon
+  User as UserIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
@@ -32,7 +32,7 @@ import {
   AlertDialogContent,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle
+  AlertDialogTitle,
 } from "../ui/alert-dialog";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -60,7 +60,7 @@ import { useSubscriptionModal } from "@/src/lib/providers/subscription-modal-pro
 const SettingsForm = () => {
   const { toast } = useToast();
   const { user, subscription } = useSupabaseUser();
-  const {open, setOpen} = useSubscriptionModal();
+  const { open, setOpen } = useSubscriptionModal();
   const router = useRouter();
   const supabase = createClientComponentClient();
   const { state, workspaceId, dispatch } = useAppState();
@@ -150,7 +150,7 @@ const SettingsForm = () => {
   const onChangeProfilePicture = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    if(e.target.files === null) return;
+    if (e.target.files === null) return;
     const file = e.target.files[0];
     let filePath = "";
     const uploadAvatar = async () => {
@@ -197,7 +197,7 @@ const SettingsForm = () => {
       }
     } catch (error) {
       console.log("Error in uploading profile picture:");
-      console.log(error)
+      console.log(error);
     }
   };
   // fetching avatar details
@@ -266,10 +266,13 @@ const SettingsForm = () => {
           type="file"
           accept="image/*"
           onChange={onChangeWorkspaceLogo}
-          // WIP SUBSCRIPTION
-          disabled={uploadingLogo}
+          disabled={uploadingLogo || subscription?.status === "active"}
         />
-        {/* WIP SUBSCRIPTIONS */}
+        {subscription?.status !== 'active' && (
+          <small className="text-muted-foreground">
+            To customize your workspace, you need to be on a Pro Plan
+          </small>
+        )}
       </div>
       <>
         <Label htmlFor="permissions">Permissions</Label>
@@ -461,15 +464,19 @@ const SettingsForm = () => {
           You are currently on a{" "}
           {subscription?.status === "active" ? "Pro" : "Free"} Plan
         </p>
-        <Link href="/" target='_blank' className="text-muted-foreground flex flex-row items-center gap-2">
-          View Plans <ExternalLink size={16}/>
+        <Link
+          href="/"
+          target="_blank"
+          className="text-muted-foreground flex flex-row items-center gap-2"
+        >
+          View Plans <ExternalLink size={16} />
         </Link>
-        {subscription?.status === 'active' ? (
+        {subscription?.status === "active" ? (
           <div>
-            <Button 
+            <Button
               type="button"
               size="sm"
-              variant={'secondary'}
+              variant={"secondary"}
               // disabled={loadingPortal}
               className="text-sm"
               // WIP onClick={redirectToCustomerPortal}
@@ -477,15 +484,14 @@ const SettingsForm = () => {
               Manage Subscription
             </Button>
           </div>
-        ): (
+        ) : (
           <div>
-            <Button 
+            <Button
               type="button"
               size="sm"
-              variant={'secondary'}
+              variant={"secondary"}
               className="text-sm"
-              onClick={() => setOpen(true)
-              }
+              onClick={() => setOpen(true)}
             >
               Start Plan
             </Button>
