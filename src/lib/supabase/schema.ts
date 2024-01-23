@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   boolean,
   integer,
@@ -8,7 +8,12 @@ import {
   timestamp,
   uuid,
 } from "drizzle-orm/pg-core";
-import { subscriptionStatus, prices, users } from "../../../migrations/schema";
+import {
+  subscriptionStatus,
+  prices,
+  users,
+  products,
+} from "../../../migrations/schema";
 
 export const workspaces = pgTable("workspaces", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
@@ -34,9 +39,11 @@ export const folders = pgTable("folders", {
   data: text("data"),
   inTrash: text("in_trash"),
   bannerUrl: text("banner_url"),
-  workspaceId: uuid("workspace_id").notNull().references(() => workspaces.id, {
-    onDelete: "cascade",
-  }),
+  workspaceId: uuid("workspace_id")
+    .notNull()
+    .references(() => workspaces.id, {
+      onDelete: "cascade",
+    }),
 });
 
 export const files = pgTable("files", {
@@ -121,3 +128,14 @@ export const collaborators = pgTable("collaborators", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
 });
+
+export const productsRelations = relations(products, ({ many }) => ({
+  prices: many(prices),
+}));
+
+export const pricesRelations = relations(prices, ({ one }) => ({
+  products: one(products, {
+    fields: [prices.productId],
+    references: [products.id],
+  }),
+}));

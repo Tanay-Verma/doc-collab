@@ -1,29 +1,40 @@
-"use client"
+"use client";
 import SubscriptionModal from "@/src/components/global/subscription-modal";
-import React, { Dispatch, SetStateAction, createContext, useContext, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  createContext,
+  useContext,
+  useState,
+} from "react";
+import { ProductWithPrice } from "../supabase/supabase.types";
 
 type SubscriptionModalContextType = {
-    open: boolean;
-    setOpen: Dispatch<SetStateAction<boolean>>
-}
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+};
 
 const SubscriptionModalContext = createContext<SubscriptionModalContextType>({
-    open:false,
-    setOpen: () => {},
-})
+  open: false,
+  setOpen: () => {},
+});
 
 export const useSubscriptionModal = () => {
-    return useContext(SubscriptionModalContext);
-}
+  return useContext(SubscriptionModalContext);
+};
 
 export const SubscriptionModalProvider = ({
-    children,
-}:{children: React.ReactNode}) => {
-    const [open, setOpen] = useState(false);
-    return (
-        <SubscriptionModalContext.Provider value={{open, setOpen}}>
-            {children}
-            <SubscriptionModal />
-        </SubscriptionModalContext.Provider>
-    )
-}
+  children,
+  products,
+}: {
+  children: React.ReactNode;
+  products: ProductWithPrice[];
+}) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <SubscriptionModalContext.Provider value={{ open, setOpen }}>
+      {children}
+      <SubscriptionModal products = {products}/>
+    </SubscriptionModalContext.Provider>
+  );
+};

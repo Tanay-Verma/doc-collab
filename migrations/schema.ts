@@ -10,7 +10,7 @@ import {
   bigint,
   integer,
 } from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 
 export const keyStatus = pgEnum("key_status", [
   "default",
@@ -30,6 +30,22 @@ export const keyType = pgEnum("key_type", [
   "secretbox",
   "secretstream",
   "stream_xchacha20",
+]);
+export const equalityOp = pgEnum("equality_op", [
+  "eq",
+  "neq",
+  "lt",
+  "lte",
+  "gt",
+  "gte",
+  "in",
+]);
+export const action = pgEnum("action", [
+  "INSERT",
+  "UPDATE",
+  "DELETE",
+  "TRUNCATE",
+  "ERROR",
 ]);
 export const factorType = pgEnum("factor_type", ["totp", "webauthn"]);
 export const factorStatus = pgEnum("factor_status", ["unverified", "verified"]);
@@ -198,3 +214,14 @@ export const collaborators = pgTable("collaborators", {
     .references(() => users.id, { onDelete: "cascade" }),
   id: uuid("id").defaultRandom().primaryKey().notNull(),
 });
+
+export const productsRelations = relations(products, ({ many }) => ({
+  prices: many(prices),
+}));
+
+export const pricesRelations = relations(prices, ({ one }) => ({
+  products: one(products, {
+    fields: [prices.productId],
+    references: [products.id],
+  }),
+}));

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useSubscriptionModal } from "@/src/lib/providers/subscription-modal-provider";
 import { useSupabaseUser } from "@/src/lib/providers/supabase-user-provider";
 import React, { useState } from "react";
@@ -11,8 +11,14 @@ import {
 } from "../ui/dialog";
 import { Button } from "../ui/button";
 import Loader from "./Loader";
+import { ProductWithPrice } from "@/src/lib/supabase/supabase.types";
+import { formatPrice } from "@/src/lib/utils";
 
-const SubscriptionModal = () => {
+interface SubscriptionModalProps {
+  products: ProductWithPrice[];
+}
+
+const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ products }) => {
   const { open, setOpen } = useSubscriptionModal();
   const { subscription } = useSupabaseUser();
   const [isLoading, setLoading] = useState(false);
@@ -28,15 +34,25 @@ const SubscriptionModal = () => {
           <DialogDescription>
             To access Pro features you need to have a paid plan.
           </DialogDescription>
-          {/* <div className="flex justify-between items-center">
-            <React.Fragment>
-              <b className="text-3xl text-foreground">
-                {formatPrice()} / <small>month</small>
-              </b>
-              <Button disabled={isLoading}>{isLoading? <Loader/>: "Upgrade ✨"}</Button>
-            </React.Fragment>
-          </div> */}
-          No Products Available
+          {products.length
+            ? products.map((product) => (
+                <div
+                  key={product.id}
+                  className="flex justify-between items-center"
+                >
+                  {product.prices?.map((price) => (
+                    <React.Fragment key={price.id}>
+                      <b className="text-3xl text-foreground">
+                        {formatPrice(price)} / <small>{price.interval}</small>
+                      </b>
+                      <Button disabled={isLoading}>
+                        {isLoading ? <Loader /> : "Upgrade ✨"}
+                      </Button>
+                    </React.Fragment>
+                  ))}
+                </div>
+              ))
+            : "No Products Available"}
         </DialogContent>
       )}
     </Dialog>
