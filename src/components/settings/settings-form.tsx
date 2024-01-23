@@ -56,6 +56,7 @@ import { Separator } from "../ui/seperator";
 import LogoutButton from "../global/logout-button";
 import Link from "next/link";
 import { useSubscriptionModal } from "@/src/lib/providers/subscription-modal-provider";
+import { postData } from "@/src/lib/utils";
 
 const SettingsForm = () => {
   const { toast } = useToast();
@@ -72,16 +73,28 @@ const SettingsForm = () => {
   const [uploadingProfilePic, setUploadingProfilePic] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState("");
+  const [loadingPortal, setLoadingPortal] = useState(false);
   // WIP PAYMENT PORTAL
+
+  const redirectToCustomerPortal = async () => {
+    setLoadingPortal(true);
+    try {
+      const { url, error } = await postData({ url: "/api/create-portal-link" });
+      window.location.assign(url);
+    } catch (error) {
+      console.log(error);
+      setLoadingPortal(false);
+    }
+    setLoadingPortal(false);
+  };
 
   // add collaborators
   const addCollaborator = async (profile: User) => {
     if (!workspaceId) return;
-    // WIP Subscription
-    // if(subscription?.status !== 'active' && collaborators.length >= 2){
-    //   setOpen(true);
-    //   return;
-    // }
+    if (subscription?.status !== "active" && collaborators.length >= 2) {
+      setOpen(true);
+      return;
+    }
     await addCollaborators([profile], workspaceId);
     setCollaborators([...collaborators, profile]);
   };
@@ -268,7 +281,7 @@ const SettingsForm = () => {
           onChange={onChangeWorkspaceLogo}
           disabled={uploadingLogo || subscription?.status === "active"}
         />
-        {subscription?.status !== 'active' && (
+        {subscription?.status !== "active" && (
           <small className="text-muted-foreground">
             To customize your workspace, you need to be on a Pro Plan
           </small>
@@ -477,9 +490,9 @@ const SettingsForm = () => {
               type="button"
               size="sm"
               variant={"secondary"}
-              // disabled={loadingPortal}
+              disabled={loadingPortal}
               className="text-sm"
-              // WIP onClick={redirectToCustomerPortal}
+              onClick={redirectToCustomerPortal}
             >
               Manage Subscription
             </Button>

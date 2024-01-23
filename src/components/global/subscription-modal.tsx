@@ -11,8 +11,10 @@ import {
 } from "../ui/dialog";
 import { Button } from "../ui/button";
 import Loader from "./Loader";
-import { ProductWithPrice } from "@/src/lib/supabase/supabase.types";
-import { formatPrice } from "@/src/lib/utils";
+import { Price, ProductWithPrice } from "@/src/lib/supabase/supabase.types";
+import { formatPrice, postData } from "@/src/lib/utils";
+import { useToast } from "../ui/use-toast";
+import { getStripe } from "@/src/lib/stripe/stripeClient";
 
 interface SubscriptionModalProps {
   products: ProductWithPrice[];
@@ -21,7 +23,36 @@ interface SubscriptionModalProps {
 const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ products }) => {
   const { open, setOpen } = useSubscriptionModal();
   const { subscription } = useSupabaseUser();
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { user } = useSupabaseUser();
+  const { toast } = useToast();
+
+  const onClickContinue = async (price: Price) => {
+    try {
+      setIsLoading(true);
+      if (!user) {
+        toast({ title: "You must be logged in" });
+        setIsLoading(false);
+        return;
+      }
+      if (subscription) {
+        toast({ title: "Already on a paid plan" });
+        setIsLoading(false);
+        return;
+      }
+      const { sessionId } = await postData({
+        url: "/api/create-checkout-session",
+        data: { price },
+      });
+      console.log("Getting Checkout for stripe");
+      const stripe = await getStripe();
+      stripe?.redirectToCheckout({sessionId});
+    } catch (error) {
+      toast({title:"Oppse! Somethiong went wrong.", variant:'destructive'})
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {subscription?.status === "active" ? (
@@ -45,7 +76,10 @@ const SubscriptionModal: React.FC<SubscriptionModalProps> = ({ products }) => {
                       <b className="text-3xl text-foreground">
                         {formatPrice(price)} / <small>{price.interval}</small>
                       </b>
-                      <Button disabled={isLoading}>
+                      <Button
+                        onClick={() => onClickContinue(price)}
+                        disabled={isLoading}
+                      >
                         {isLoading ? <Loader /> : "Upgrade ✨"}
                       </Button>
                     </React.Fragment>
