@@ -57,8 +57,10 @@ import LogoutButton from "../global/logout-button";
 import Link from "next/link";
 import { useSubscriptionModal } from "@/src/lib/providers/subscription-modal-provider";
 import { postData } from "@/src/lib/utils";
+import useSupabaseRealtime from "@/src/lib/hooks/useSupabaseRealtime";
 
 const SettingsForm = () => {
+  useSupabaseRealtime()
   const { toast } = useToast();
   const { user, subscription } = useSupabaseUser();
   const { open, setOpen } = useSubscriptionModal();
