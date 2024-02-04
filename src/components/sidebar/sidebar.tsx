@@ -1,6 +1,3 @@
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import React from "react";
-import { cookies } from "next/headers";
 import {
   getCollaboratingWorkspaces,
   getFolders,
@@ -8,14 +5,17 @@ import {
   getSharedWorkspaces,
   getUserSubscriptionStatus,
 } from "@/src/lib/supabase/queries";
-import { error } from "console";
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import React from "react";
 import { twMerge } from "tailwind-merge";
-import WorkspaceDropdown from "./workspace-dropdown";
-import PlanUsage from "./plan-usage";
-import NativeNavigation from "./native-navigation";
 import { ScrollArea } from "../ui/scroll-area";
 import FoldersDropdownList from "./folders-dropdown-list";
+import NativeNavigation from "./native-navigation";
+import PlanUsage from "./plan-usage";
+import WorkspaceDropdown from "./workspace-dropdown";
+import UserCard from "./user-card";
 
 interface SidebarProps {
   params: { workspaceId: string };
@@ -82,6 +82,7 @@ const Sidebar: React.FC<SidebarProps> = async ({ params, className }) => {
           <FoldersDropdownList workspaceFolders = {workspaceFolderData || []} workspaceId={params.workspaceId}/>
         </ScrollArea>
       </div>
+      <UserCard subscription={subscriptionData} />
     </aside>
   );
 };
