@@ -86,6 +86,7 @@ export const createOrRetrieveCustomer = async ({
         .insert(customers)
         .values({ id: uuid, stripeCustomerId: customer.id });
       console.log(`New customer created and inserted for ${uuid}.`);
+      return customer.id;
     } catch (error) {
       throw new Error("Could not create Customer or find the customer");
     }
