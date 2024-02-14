@@ -21,7 +21,7 @@ export async function POST() {
     if (!customer) throw new Error("No Customer");
     const { url } = await stripe.billingPortal.sessions.create({
       customer,
-      return_url: `${getURL()}/dashbiard`,
+      return_url: `${getURL()}/dashboard`,
     });
     return NextResponse.json({ url });
   } catch (error) {

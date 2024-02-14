@@ -11,7 +11,7 @@ const ModeToggle = () => {
       variant={"outline"}
       size="icon"
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="rounded-full"
+      className="rounded-full border border-black dark:border-none"
     >
       <Sun
         className="h-[1.2rem]

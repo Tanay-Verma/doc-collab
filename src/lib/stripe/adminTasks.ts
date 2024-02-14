@@ -98,7 +98,7 @@ export const copyBillingDetailsToCustomer = async (
 ) => {
   const customer = payment_method.customer as string;
   const { name, phone, address } = payment_method.billing_details;
-  if (!name || !phone || !address) return;
+  if (!name && !phone && !address) return;
   //@ts-ignore
   await stripe.customers.update(customer, { name, phone, address });
   try {

@@ -204,7 +204,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
         payload: { fileId, folderId, workspaceId },
       });
       await deleteFile(fileId);
-      router.replace(`/dashboard/${workspaceId}`)
+      router.replace(`/dashboard/${workspaceId}`);
     }
     if (dirType === "folder") {
       if (!workspaceId) return;
@@ -213,7 +213,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
         payload: { folderId: fileId, workspaceId },
       });
       await deleteFolder(fileId);
-      router.replace(`/dashboard/${workspaceId}`)
+      router.replace(`/dashboard/${workspaceId}`);
     }
   };
 
@@ -373,11 +373,11 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
         }
       }
     };
-    socket.on('receive-cursor-move', socketHandler);
-    return ( ) => {
-      socket.off('receive-cursor-move', socketHandler);
-    }
-  },[quill, socket, fileId, localCursors]);
+    socket.on("receive-cursor-move", socketHandler);
+    return () => {
+      socket.off("receive-cursor-move", socketHandler);
+    };
+  }, [quill, socket, fileId, localCursors]);
   // rooms
   useEffect(() => {
     if (socket === null || quill === null || !fileId) return;
@@ -656,7 +656,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
         <div
           className="w-full 
         self-center 
-        max-w-[800px] 
+        max-w-[1200px] 
         flex 
         flex-col 
         px-7 
@@ -724,7 +724,11 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
             {dirType.toUpperCase()}
           </span>
         </div>
-        <div id="container" className="max-[800px]" ref={wrapperRef}></div>
+        <div
+          id="container"
+          className="max-w-[1200px] dark:bg-Neutrals/neutrals-13 bg-neutral-100 rounded-md"
+          ref={wrapperRef}
+        />
       </div>
     </>
   );

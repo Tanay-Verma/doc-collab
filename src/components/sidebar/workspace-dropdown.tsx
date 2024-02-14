@@ -77,13 +77,13 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
             shadow-md 
             z-50 
             h-[190px] 
-            bg-black/10
-            backdrop-blur-lg
-            group
-            overflow-y-auto
-            overflow-x-hidden
-            border-[1px]
-            border-muted"
+            dark:bg-black/10 
+            backdrop-blur-lg 
+            group 
+            overflow-y-auto 
+            overflow-x-hidden 
+            border-[1px] 
+            border-muted "
         >
           <div className="rounded-md flex flex-col">
             <div className="!p-2">
