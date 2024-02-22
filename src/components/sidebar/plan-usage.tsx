@@ -29,9 +29,26 @@ const PlanUsage: React.FC<PlanUsageProps> = ({
   }, [state, workspaceId]);
   return (
     <article className="mb-4">
-      {subscription?.status !== "active" && (
+      {subscription?.status === "active" ? (
+        <div className="flex gap-4 text-muted-foreground mb-2 items-baseline">
+          <div className="h-4 w-4 text-xl">🔥</div>
+          <div
+            className="flex
+        justify-between
+        w-full
+        items-center
+        font-bold
+        dark:text-white
+        "
+          >
+            <div>Pro Plan</div>
+          </div>
+        </div>
+      ) : (
         <div className="flex gap-2 text-muted-foreground mb-2 items-center">
-            <div className="h-4 w-4"><DocCollabDiamondIcon/></div>
+          <div className="h-4 w-4">
+            <DocCollabDiamondIcon />
+          </div>
           <div
             className="flex
         justify-between
