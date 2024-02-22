@@ -29,9 +29,15 @@ export async function middleware(req: NextRequest) {
     );
   }
 
-  if (["/login", "/signup"].includes(req.nextUrl.pathname)) {
+  if (["/login", "/signup", "/forgot-password", "/reset-password"].includes(req.nextUrl.pathname)) {
     if (session) {
       return NextResponse.redirect(new URL("/dashboard", req.url));
+    }
+  }
+
+  if (req.nextUrl.pathname === "/reset-password") {
+    if (!req.nextUrl.searchParams.get('code')) {
+      return NextResponse.redirect(new URL("/login", req.url))
     }
   }
 

@@ -23,7 +23,7 @@ export async function actionSignUpUser({
 }: z.infer<typeof FormSchema>) {
   const supabase = createRouteHandlerClient({ cookies });
   const { data } = await supabase
-    .from("profiles")
+    .from("users")
     .select("*")
     .eq("email", email);
 
@@ -35,5 +35,30 @@ export async function actionSignUpUser({
       emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}api/auth/callback`,
     },
   });
-  return response
+  return response;
+}
+
+export async function actionForgotPassword({
+  email,
+}: Pick<z.infer<typeof FormSchema>, "email">) {
+  const supabase = createRouteHandlerClient({ cookies });
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("email", email);
+  if (!data?.length)
+    return { error: { message: "User does not exists", error } };
+
+  const response = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: process.env.NEXT_PUBLIC_SITE_URL + "reset-password",
+  });
+  return response;
+}
+
+export async function actionResetPassword({
+  password,
+}: Pick<z.infer<typeof FormSchema>, "password">) {
+  const supabase = createRouteHandlerClient({ cookies });
+  const response = await supabase.auth.updateUser({ password });
+  return response;
 }

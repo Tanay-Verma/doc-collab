@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FormSchema } from "@/src/lib/types";
 import {
   Form,
   FormControl,
@@ -19,28 +18,35 @@ import DocCollabLogo from "@/public/DocCollabLogo.svg";
 import { Input } from "@/src/components/ui/input";
 import { Button } from "@/src/components/ui/button";
 import Loader from "@/src/components/global/Loader";
-import { actionLoginUser } from "@/src/lib/server-actions/auth-actions";
+import { actionForgotPassword } from "@/src/lib/server-actions/auth-actions";
+import { Alert, AlertDescription, AlertTitle } from "@/src/components/ui/alert";
+import { MailCheck } from "lucide-react";
 
-const LoginPage = () => {
+const ForgotPasswordFormSchema = z.object({
+  email: z.string().describe("Email").email({ message: "Invalid Email" }),
+});
+
+const ForgotPasswordPage = () => {
   const router = useRouter();
   const [submitError, setSubmitError] = useState("");
-
-  const form = useForm<z.infer<typeof FormSchema>>({
+  const [confirmation, setConfirmation] = useState(false);
+  const form = useForm<z.infer<typeof ForgotPasswordFormSchema>>({
     mode: "onChange",
-    resolver: zodResolver(FormSchema),
-    defaultValues: { email: "", password: "" },
+    resolver: zodResolver(ForgotPasswordFormSchema),
+    defaultValues: { email: "" },
   });
 
   const isLoading = form.formState.isSubmitting;
-  const onSubmit: SubmitHandler<z.infer<typeof FormSchema>> = async (
-    formData
-  ) => {
-    const { error } = await actionLoginUser(formData);
+  const onSubmit: SubmitHandler<
+    z.infer<typeof ForgotPasswordFormSchema>
+  > = async (formData) => {
+    const { error } = await actionForgotPassword(formData);
     if (error) {
       form.reset();
       setSubmitError(error.message);
+      return;
     }
-    router.replace("/dashboard");
+    setConfirmation(true);
   };
   return (
     <Form {...form}>
@@ -91,43 +97,31 @@ const LoginPage = () => {
             </FormItem>
           )}
         />
-        <FormField
-          disabled={isLoading}
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Input type="password" placeholder="Password" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         {submitError && <FormMessage>{submitError}</FormMessage>}
-        <Button
-          type="submit"
-          className="w-full p-6"
-          size="lg"
-          disabled={isLoading}
-        >
-          {!isLoading ? "Login" : <Loader />}
-        </Button>
-        <span className="self-center">
-          Don&apos;t have an account?{" "}
-          <Link href="/signup" className="text-primary">
-            Sign Up
-          </Link>
-        </span>
-        <span className="self-center">
-          Forgot password?{" "}
-          <Link href="/forgot-password" className="text-primary">
-            Click Here
-          </Link>
-        </span>
+
+        {confirmation ? (
+          <>
+            <Alert className="bg-primary cursor-not-allowed">
+              <MailCheck className="h-4 w-4" />
+              <AlertTitle>Check your email.</AlertTitle>
+              <AlertDescription>
+                A password reset email has been sent.
+              </AlertDescription>
+            </Alert>
+          </>
+        ) : (
+          <Button
+            type="submit"
+            className="w-full p-6"
+            size="lg"
+            disabled={isLoading}
+          >
+            {!isLoading ? "Forgot Password" : <Loader />}
+          </Button>
+        )}
       </form>
     </Form>
   );
 };
 
-export default LoginPage;
+export default ForgotPasswordPage;
